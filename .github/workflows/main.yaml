@@ -22,9 +22,9 @@ jobs:
         run: |
           composer Install
 
-      - name: Setup Env
-        run: |
-          cp .env.ci .env
+      # - name: Setup Env
+      #   run: |
+      #     cp .env.ci .env
 
       - name: Build the Application
         run: |
