@@ -1,16 +1,31 @@
-name: "Main Workflow"
+name: Main Workflow
+
 on:
   pull_request:
     branches:
       - dev
 
 jobs:
-  first-job:
+  build:
+    name: Build Laravel App
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Start Running the jobs"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
 
-  second-job:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Run second the jobs"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          composer Install
+
+      - name: Setup Env
+        run: |
+          cp .env.ci .env
+
+      - name: Build the Application
+        run: |
+          php artisan key:generate
