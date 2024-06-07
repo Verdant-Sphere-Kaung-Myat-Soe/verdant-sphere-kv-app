@@ -17,9 +17,9 @@ services:
       - mysql
 
   mysql:
-    image: mysql:5.7
-    container_name: mysql-5.7
-    restart: unless-stopped
+    image: mysql:8.0
+    container_name: mysql-8.0
+    # restart: unless-stopped
     # command: mysqld --sql_mode="ALLOW_INVALID_DATES,NO_ZERO_DATE"
     environment:
       MYSQL_ROOT_PASSWORD: root
