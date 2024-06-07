@@ -19,11 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create MySQL Docker container
-        run: docker-compose up -d mysql
+      # - name: Create MySQL Docker container
+      #   run: docker-compose up -d mysql
 
       - name: Start MySQL
-        run: docker run -d mysql
+        run: docker run -e MYSQL_DATABASE=verdant_sphere_kv_app MYSQL_USER=verdant_sphere MYSQL_PASSWORD=password -p 3306=3306 -d mysql-8.0
 
       # - name: Setup mysql
       #   uses: mirromutth/mysql-action@v1.1
