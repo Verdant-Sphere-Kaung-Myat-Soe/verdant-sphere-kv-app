@@ -19,8 +19,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create docker containers
-        run: docker-compose up -d mysql
+      # - name: Create docker containers
+      #   run: docker-compose up -d mysql
+
+      - name: Setup mysql
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql database: 'verdant_sphere_kv_app' # Optional, default value is "test". The specified database which will be create
+          mysql root password: 'root' # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: 'verdant_sphere' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: 'password'
 
       - name: Install Dependencies
         run: |
