@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Create docker containers
+        run: docker-compose up -d mysql
+        
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -30,13 +33,6 @@ jobs:
       - name: Build the Application
         run: |
           php artisan key:generate
-
-      - name: Create docker containers
-        run: docker-compose up -d mysql
-
-      - name: Start mysql
-        run: |
-          /etc/init.d/mysql start
 
       - name: Run Unit Test
         run: |
