@@ -34,6 +34,10 @@ jobs:
       - name: Create docker containers
         run: docker-compose up -d mysql
 
+      - name: Start mysql
+        run: |
+          /etc/init.d/mysql start
+
       - name: Run Unit Test
         run: |
           php artisan migrate:fresh --seed
