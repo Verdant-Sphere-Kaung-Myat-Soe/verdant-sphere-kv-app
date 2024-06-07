@@ -25,6 +25,8 @@ services:
       MYSQL_DATABASE: verdant_sphere_kv_app
       MYSQL_USER: verdant_sphere
       MYSQL_PASSWORD: password
+    volumes:
+      - 'mysql_data:/bitnami'
 
   # Application Service
   app:
@@ -48,3 +50,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: kaungmyatsoe@gmail.com
       PGADMIN_DEFAULT_PASSWORD: password 
+
+volumes:
+    mysql_data:
+        driver: local
+
