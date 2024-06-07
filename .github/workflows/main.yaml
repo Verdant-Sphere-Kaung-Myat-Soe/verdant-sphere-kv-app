@@ -6,9 +6,19 @@ on:
       - dev
 
 jobs:
-  build:
-    name: Build Laravel App
+  runner-job:
     runs-on: ubuntu-latest
+    services:
+      mysql: 
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: verdant_sphere_kv_app
+          MYSQL_USER: verdant_sphere
+          MYSQL_PASSWORD: password
+        volumes:
+          - dbdata:/var/lib/mysql
+
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -22,10 +32,55 @@ jobs:
         run: |
           composer Install
 
-      # - name: Setup Env
-      #   run: |
-      #     cp .env.ci .env
+      - name: Setup Env
+        run: |
+          cp .env.ci .env
 
       - name: Build the Application
         run: |
           php artisan key:generate
+
+      # - name: Tests
+      #   uses: cloudposse/github-action-docker-compose-test-run@main
+      #   with:
+      #     file: ../../compose.yml
+      #     service: app
+      #     command: php artisan test
+
+      - name: Run Unit Test
+        run: |
+          php artisan test
+  # build:
+  #   name: Build Laravel App
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup PHP
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: "8.2"
+
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Install Dependencies
+  #       run: |
+  #         composer Install
+
+  #     - name: Setup Env
+  #       run: |
+  #         cp .env.ci .env
+
+  #     - name: Build the Application
+  #       run: |
+  #         php artisan key:generate
+
+  #     # - name: Tests
+  #     #   uses: cloudposse/github-action-docker-compose-test-run@main
+  #     #   with:
+  #     #     file: ../../compose.yml
+  #     #     service: app
+  #     #     command: php artisan test
+
+  #     - name: Run Unit Test
+  #       run: |
+  #         php artisan test
