@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - ./dockers/nginx/conf.d/:/etc/nginx/conf.d/
+    links:
+      - "app:app"
+      - "mysql:mysql"
+    depends_on:
+      - app
+      - mysql
+
+  mysql:
+    image: bitnami/mysql:8.0
+    container_name: mysql-8
+    command: mysqld --sql_mode="ALLOW_INVALID_DATES,NO_ZERO_DATE"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: verdant_sphere_kv_app
+      MYSQL_USER: verdant_sphere
+      MYSQL_PASSWORD: password
+
+  # Application Service
+  app:
+    container_name: blog
+    build: 
+      context: ./dockers/php
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www
+    ports:
+      - "9000:9000"
+    working_dir: /var/www
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgAdmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - mysql 
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hanieasemi76@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password 

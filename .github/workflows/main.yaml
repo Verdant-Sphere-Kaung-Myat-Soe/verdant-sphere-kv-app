@@ -47,8 +47,12 @@ jobs:
       #     service: app
       #     command: php artisan test
 
+      - name: Create docker containers
+        run: docker-compose up mysql
+
       - name: Run Unit Test
         run: |
+          php artisan migrate:fresh --seed
           php artisan test
   # build:
   #   name: Build Laravel App
