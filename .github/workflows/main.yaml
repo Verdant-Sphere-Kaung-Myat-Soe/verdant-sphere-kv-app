@@ -49,7 +49,7 @@ jobs:
       #     command: php artisan test
 
       - name: Create docker containers
-        run: docker-compose up mysql
+        run: docker-compose up -d mysql
 
       - name: Run Unit Test
         run: |
