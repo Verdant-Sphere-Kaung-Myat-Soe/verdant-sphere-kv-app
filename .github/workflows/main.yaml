@@ -41,7 +41,7 @@ jobs:
         run: |
           php artisan key:generate
 
-      - name: Run Unit Test
+      - name: Run migration and Unit Test
         run: |
           php artisan migrate:fresh --seed
           php artisan test
