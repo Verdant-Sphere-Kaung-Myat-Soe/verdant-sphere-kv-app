@@ -53,7 +53,8 @@ jobs:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarcloud-github-action@v2.3.0
+        # uses: sonarsource/sonarcloud-github-action@v2.3.0
+        uses: sonarsource/sonarqube-scan-action@v2.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
