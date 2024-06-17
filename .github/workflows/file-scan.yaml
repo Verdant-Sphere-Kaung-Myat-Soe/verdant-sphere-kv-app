@@ -1,0 +1,40 @@
+name: Development
+
+on:
+  workflow_call:
+
+
+jobs:
+  codeScan:
+    name: "Scan Files"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          composer Install
+
+      - name: Cache the Vendor
+        uses: actions/cache@v4.0.2
+        with:
+          key: ${{ github.sha }}-php-vendor-cache
+          path: ./vendor
+
+      - name: Setup Env
+        run: |
+          cp .env.ci .env
+
+      - name: Build the Application
+        run: |
+          php artisan key:generate
+
+      # - name: Analyze Files
+        
