@@ -68,19 +68,21 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
       SONAR_PROJECT: ${{ secrets.SONAR_PROJECT }}
+    with:
+      php-version: "8.3"
 
   # fileScan:
   #   name: "Scan Files"
   #   uses: ./.github/workflows/file-scan.yaml
 
-  DockerBuild:
-    name: "Build Docker Image and push to docker hub"
-    uses: ./.github/workflows/docker-build.yaml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  # DockerBuild:
+  #   name: "Build Docker Image and push to docker hub"
+  #   uses: ./.github/workflows/docker-build.yaml
+  #   secrets:
+  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  DockerScan:
-    name: "Scan Docker image"
-    needs: [DockerBuild]
-    uses: ./.github/workflows/docker-scan.yaml
+  # DockerScan:
+  #   name: "Scan Docker image"
+  #   needs: [DockerBuild]
+  #   uses: ./.github/workflows/docker-scan.yaml

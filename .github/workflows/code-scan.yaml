@@ -2,6 +2,11 @@ name: Development
 
 on:
   workflow_call:
+    inputs:
+      php-version:
+        description: "PHP Version"
+        required: true
+        type: string
     secrets:
       SONAR_TOKEN:
         required: true
@@ -16,8 +21,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Build Laravel App
+        uses: ./.github/workflows/prepare-action
+        with:
+          php-version: ${{ inputs.version }}
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2.3.0
@@ -28,4 +35,4 @@ jobs:
         uses: sonarsource/sonarcloud-github-action@v2.3.0
         with:
           projectBaseDir: ./
-          args: Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}-Dsonar.projectKey=${{ secrets.SONAR_PROJECT }}-Dsonar.verbose=true
+          args: ">-Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}-Dsonar.projectKey=${{ secrets.SONAR_PROJECT }}-Dsonar.login=${{ secrets.SONAR_TOKEN }}-Dsonar.verbose=true"
