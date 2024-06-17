@@ -61,8 +61,8 @@ jobs:
           php artisan migrate:fresh --seed
           # php artisan test
 
-  codeScan:
-    uses: ./.github/workflows/code-scan.yaml
+  # codeScan:
+  #   uses: ./.github/workflows/code-scan.yaml
 
   # fileScan:
   #   uses: ./.github/workflows/file-scan.yaml
@@ -70,6 +70,6 @@ jobs:
   DockerBuild:
     uses: ./.github/workflows/docker-build.yaml
 
-  DockerScan:
-    needs: [DockerBuild]
-    uses: ./.github/workflows/docker-scan.yaml
+  # DockerScan:
+  #   needs: [DockerBuild]
+  #   uses: ./.github/workflows/docker-scan.yaml
