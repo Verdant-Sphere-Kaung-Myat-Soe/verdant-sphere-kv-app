@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Build Laravel App
-        uses: ./.github/workflows/prepare-action.yaml
+        uses: ./.github/workflows/development.yaml
         with:
           php-version: ${{ inputs.version }}
 
