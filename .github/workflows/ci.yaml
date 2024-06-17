@@ -64,6 +64,10 @@ jobs:
   codeScan:
     name: "Scan Codes"
     uses: ./.github/workflows/code-scan.yaml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+      SONAR_PROJECT: ${{ secrets.SONAR_PROJECT }}
 
   # fileScan:
   #   name: "Scan Files"
@@ -72,6 +76,9 @@ jobs:
   DockerBuild:
     name: "Build Docker Image and push to docker hub"
     uses: ./.github/workflows/docker-build.yaml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   DockerScan:
     name: "Scan Docker image"
