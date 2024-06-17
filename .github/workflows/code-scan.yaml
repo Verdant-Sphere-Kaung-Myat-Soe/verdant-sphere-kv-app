@@ -21,10 +21,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build Laravel App
-        uses: ./.github/workflows/development.yaml
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.version }}
+          php-version: ${{ inputs.php-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          composer Install
+
+      - name: Cache the Vendor
+        uses: actions/cache@v4.0.2
+        with:
+          key: ${{ github.sha }}-php-vendor-cache
+          path: ./vendor
+        
+      - name: Setup Env
+        run: |
+          cp .env.ci .env
+
+      - name: Build the Application
+        run: |
+          php artisan key:generate
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2.3.0
