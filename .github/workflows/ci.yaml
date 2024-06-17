@@ -61,15 +61,19 @@ jobs:
           php artisan migrate:fresh --seed
           # php artisan test
 
-  # codeScan:
-  #   uses: ./.github/workflows/code-scan.yaml
+  codeScan:
+    name: "Scan Codes"
+    uses: ./.github/workflows/code-scan.yaml
 
-  # fileScan:
-  #   uses: ./.github/workflows/file-scan.yaml
+  fileScan:
+    name: "Scan Files"
+    uses: ./.github/workflows/file-scan.yaml
 
   DockerBuild:
+    name: "Build Docker Image and push to docker hub"
     uses: ./.github/workflows/docker-build.yaml
 
-  # DockerScan:
-  #   needs: [DockerBuild]
-  #   uses: ./.github/workflows/docker-scan.yaml
+  DockerScan:
+    name: "Scan Docker image"
+    needs: [DockerBuild]
+    uses: ./.github/workflows/docker-scan.yaml
