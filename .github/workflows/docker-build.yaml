@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push as docker image to Docker Hub
+      - name: Build and push as docker image to Docker Hub from action
         uses: docker/build-push-action@v5
         with:
           context: ./dockers/php
