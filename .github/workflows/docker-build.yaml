@@ -27,6 +27,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./dockers/php
-          file: Dockerfile
+          file: ./Dockerfile
           push: true
           tags: kaungmyatsoedev/wops-laravel:${{ github.sha }}
