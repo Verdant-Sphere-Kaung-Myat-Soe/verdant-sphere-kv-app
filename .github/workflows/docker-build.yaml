@@ -26,7 +26,7 @@ jobs:
       - name: Build and push as docker image to Docker Hub from action
         uses: docker/build-push-action@v5
         with:
-          context: ./dockers/php
+          context: .
           file: ./Dockerfile
           push: true
           tags: kaungmyatsoedev/wops-laravel:${{ github.sha }}
