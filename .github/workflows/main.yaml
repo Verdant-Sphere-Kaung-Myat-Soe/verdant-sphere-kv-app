@@ -6,8 +6,8 @@ on:
       - ci
   pull_request:
     branches:
-      - main
-      - dev
+      # - main
+      # - dev
 
 jobs:
   build:
@@ -31,18 +31,18 @@ jobs:
   #     SONAR_PROJECT: ${{ secrets.SONAR_PROJECT }}
   #   with:
   #     php-version: "8.3"
-  # fileScan:
-  #   name: File Security Scan with Trivy FS
-  #   needs: [build]
-  #   uses: ./.github/workflows/file-scan.yaml
-  #   with:
-  #     php-version: "8.3"
-  docker-build:
-    name: Create Docker Image
+  fileScan:
+    name: File Security Scan with Trivy FS
     needs: [build]
-    uses: ./.github/workflows/docker-build.yaml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    uses: ./.github/workflows/file-scan.yaml
+    with:
+      php-version: "8.3"
+  # docker-build:
+  #   name: Create Docker Image
+  #   needs: [build]
+  #   uses: ./.github/workflows/docker-build.yaml
+  #   secrets:
+  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

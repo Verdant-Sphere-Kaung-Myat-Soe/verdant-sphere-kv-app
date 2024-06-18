@@ -16,5 +16,5 @@ jobs:
       - name: Build Laravel App
         uses: ./.github/prepare-action
         with:
-          php-version: ${{ inputs.version }}
+          php-version: ${{ inputs.php-version }}
           cache-key: ${{ github.sha }}-php-vendor-cache

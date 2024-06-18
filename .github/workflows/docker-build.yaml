@@ -70,10 +70,10 @@ jobs:
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           EOF
 
-      - name: Copy .env file to container
-        run: docker cp .env verdant-sphere-kv:/var/www/html/.env
+      # - name: Copy .env file to container
+      #   run: docker cp .env verdant-sphere-kv:/var/www/html/.env
 
-      - name: Set up Laravel environment
-        run: |
-          php artisan key:generate
-          php artisan migrate --force
+      # - name: Set up Laravel environment
+      #   run: |
+      #     php artisan key:generate
+      #     php artisan migrate --force
