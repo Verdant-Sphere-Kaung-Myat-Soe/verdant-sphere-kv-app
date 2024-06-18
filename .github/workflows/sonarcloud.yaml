@@ -28,12 +28,13 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-          
+
       - name: Build Laravel App
         uses: ./.github/prepare-action
         with:
           php-version: ${{ inputs.version }}
           cache-key: ${{ github.sha }}-php-vendor-cache
+          
       - name: Analyze with SonarCloud
         uses: sonarsource/sonarcloud-github-action@v2.3.0
         with:
