@@ -15,7 +15,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: "https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/verdant-sphere-kv:latest
+          image-ref: "https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/verdant-sphere-kv:latest"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
