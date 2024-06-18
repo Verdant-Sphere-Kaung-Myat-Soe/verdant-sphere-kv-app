@@ -1,4 +1,4 @@
-name: Development
+name: Docker Build
 
 on:
   workflow_call:
@@ -7,26 +7,73 @@ on:
         required: true
       DOCKERHUB_TOKEN:
         required: true
-
+      DB_USERNAME:
+        required: true
+      DB_PASSWORD:
+        required: true
+permissions: write-all
 jobs:
-  dockerBuild:
-    name: "Build Docker image"
+  docker:
     runs-on: ubuntu-latest
-
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: laravel_db
+          MYSQL_USER: ${{ secrets.DB_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub from Github action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push as docker image to Docker Hub from action
-        uses: docker/build-push-action@v5
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: kaungmyatsoedev/wops-laravel:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/verdant-sphere-kv:latest
+
+      - name: Image digest
+        run: echo ${{ steps.build-and-push.outputs.digest }}
+      - name: Create .env file
+        run: |
+          cat <<EOF > .env
+          APP_NAME=Laravel
+          APP_ENV=production
+          APP_KEY=
+          APP_DEBUG=false
+          APP_URL=http://localhost
+          LOG_CHANNEL=stack
+          DB_CONNECTION=mysql
+          DB_HOST=mysql
+          DB_PORT=3306
+          DB_DATABASE=laravel_db
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          EOF
+
+      - name: Copy .env file to container
+        run: docker cp .env verdant-sphere-kv:/var/www/html/.env
+
+      - name: Set up Laravel environment
+        run: |
+          php artisan key:generate
+          php artisan migrate --force

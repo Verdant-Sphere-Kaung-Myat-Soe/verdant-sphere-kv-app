@@ -37,12 +37,12 @@ jobs:
     uses: ./.github/workflows/file-scan.yaml
     with:
       php-version: "8.3"
-  # docker-build:
-  #   name: Create Docker Image
-  #   needs: [build]
-  #   uses: ./.github/workflows/docker-build.yaml
-  #   secrets:
-  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     DB_USERNAME: ${{ secrets.DB_USERNAME }}
-  #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  docker-build:
+    name: Create Docker Image
+    needs: [build]
+    uses: ./.github/workflows/docker-build.yaml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
