@@ -6,6 +6,9 @@ on:
         description: "PHP Version"
         required: true
         type: string
+    secrets: 
+      SNYK_TOKEN:
+        required: true
 
 jobs:
   build:
@@ -20,6 +23,12 @@ jobs:
         with:
           php-version: ${{ inputs.php-version }}
           cache-key: ${{ github.sha }}-php-vendor-cache
+
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/php@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       # - name: Run Trivy vulnerability scanner in repo mode
       #   uses: aquasecurity/trivy-action@0.22.0
