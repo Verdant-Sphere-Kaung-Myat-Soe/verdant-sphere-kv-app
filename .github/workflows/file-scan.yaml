@@ -1,40 +1,31 @@
-name: Development
-
+name: File Scan with TrivyFS
 on:
   workflow_call:
-
+    inputs:
+      php-version:
+        description: "PHP Version"
+        required: true
+        type: string
 
 jobs:
-  codeScan:
-    name: "Scan Files"
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ inputs.php-version }}
-
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          composer Install
-
-      - name: Cache the Vendor
-        uses: actions/cache@v4.0.2
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@0.22.0
         with:
-          key: ${{ github.sha }}-php-vendor-cache
-          path: ./vendor
+          scan-type: "fs"
+          ignore-unfixed: true
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL"
 
-      - name: Setup Env
-        run: |
-          cp .env.ci .env
-
-      - name: Build the Application
-        run: |
-          php artisan key:generate
-
-      # - name: Analyze Files
+      - name: Upload Trivyscan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-results.sarif"
         

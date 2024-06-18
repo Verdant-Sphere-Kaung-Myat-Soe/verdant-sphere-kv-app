@@ -1,71 +1,35 @@
-FROM php:8.2.0-fpm
-
-# Install composer
-RUN echo "\e[1;33mInstall COMPOSER\e[0m"
-RUN cd /tmp \
-    && curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/composer
-
-RUN docker-php-ext-install pdo pdo_mysql
-
-RUN apt-get update
-
-# Install useful tools
-RUN apt-get -y install apt-utils nano wget dialog vim
-
-# Install important libraries
-RUN echo "\e[1;33mInstall important libraries\e[0m"
-RUN apt-get -y install --fix-missing \
-    apt-utils \
-    build-essential \
-    git \
-    curl \
-    libcurl4 \
-    libcurl4-openssl-dev \
-    zlib1g-dev \
-    libzip-dev \
-    zip \
-    libbz2-dev \
-    locales \
-    libmcrypt-dev \
-    libicu-dev \
-    libonig-dev \
-    libxml2-dev
-    
-# RUN echo "\e[1;33mInstall important docker dependencies\e[0m"
-# RUN docker-php-ext-install \
-#     exif \
-#     pcntl \
-#     bcmath \
-#     ctype \
-#     curl \
-#     iconv \
-#     xml \
-#     soap \
-#     pcntl \
-#     mbstring \
-#     tokenizer \
-#     bz2 \
-#     zip \
-#     intl
-
-# Install Postgre PDO
-RUN apt-get install -y libpq-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
-
-
-# Copy the application code
-COPY . /var/www/html
+# Use an official PHP image as the base image
+FROM php:8.3.6-apache
 
 # Set the working directory
 WORKDIR /var/www/html
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Enable Apache mod_rewrite module and install required libraries and PHP extensions
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    libicu-dev \
+    libmariadb-dev \
+    unzip zip \
+    zlib1g-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gettext intl pdo_mysql gd zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod rewrite
 
-# Install project dependencies
-RUN composer install
+# Copy Composer from the official Composer image
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Set file ownership and permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+# Switch to www-data user
+USER www-data
+
+# Expose the web server port
+EXPOSE 80

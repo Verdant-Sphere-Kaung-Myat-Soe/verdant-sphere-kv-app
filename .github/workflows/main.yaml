@@ -1,62 +1,48 @@
-name: Main Workflow
+name: CI Workflow
 
 on:
+  push:
+    branches:
+      - ci
   pull_request:
     branches:
+      - main
       - dev
 
 jobs:
   build:
-    name: "Build Laravel App"
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_USERNAME: root
-          MYSQL_DATABASE: test
-
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: |
-          composer Install
-
-      - name: Setup Env
-        run: |
-          cp .env.ci .env
-
-      - name: Build the Application
-        run: |
-          php artisan key:generate
-
-      - name: Run migration and Unit Test
-        run: |
-          php artisan migrate:fresh --seed
-          php artisan test
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push as docker image to Docker Hub
-        uses: docker/build-push-action@v5
-        with:
-          context: ./dockers/php
-          file: Dockerfile
-          push: true
-          tags: kaungmyatsoedev/wops-laravel:latest
-  
+    name: Build Laravel App
+    uses: ./.github/workflows/build.yaml
+    with:
+      php-version: "8.3"
+  # test:
+  #   name: Test Laravel App
+  #   needs: [build]
+  #   uses: ./.github/workflows/test.yaml
+  #   with:
+  #     php-version: "8.3"
+  sonarcloud:
+    name: Scan Security with SonarCloud
+    needs: [build]
+    uses: ./.github/workflows/sonarcloud.yaml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+      SONAR_PROJECT: ${{ secrets.SONAR_PROJECT }}
+    with:
+      php-version: "8.3"
+  # trivyfs-file:
+  #   name: File Security Scan with Trivy FS
+  #   needs: [build]
+  #   uses: ./.github/workflows/trivyfs-file.yaml
+  #   with:
+  #     php-version: "8.3"
+  # docker-build:
+  #   name: Create Docker Image
+  #   needs: [build]
+  #   uses: ./.github/workflows/docker-build.yaml
+  #   secrets:
+  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
