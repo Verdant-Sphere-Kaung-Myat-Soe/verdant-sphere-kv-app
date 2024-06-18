@@ -11,7 +11,7 @@ on:
         required: true
       DB_PASSWORD:
         required: true
-permissions: write-all
+# permissions: write-all
 jobs:
   docker:
     runs-on: ubuntu-latest
