@@ -21,18 +21,19 @@ jobs:
   #   uses: ./.github/workflows/test.yaml
   #   with:
   #     php-version: "8.3"
-  # sonarcloud:
-  #   name: Scan Security with SonarCloud
-  #   needs: [build]
-  #   uses: ./.github/workflows/sonarcloud.yaml
-  #   secrets:
-  #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #     SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-  #     SONAR_PROJECT: ${{ secrets.SONAR_PROJECT }}
-  #   with:
-  #     php-version: "8.3"
+  sonarcloud:
+    name: Scan Security with SonarCloud
+    needs: [build]
+    uses: ./.github/workflows/sonarcloud.yaml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+      SONAR_PROJECT: ${{ secrets.SONAR_PROJECT }}
+    with:
+      php-version: "8.3"
+
   fileScan:
-    name: File Security Scan with Trivy FS
+    name: File Security Scan with Snyk
     needs: [build]
     uses: ./.github/workflows/file-scan.yaml
     with:
@@ -40,19 +41,19 @@ jobs:
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-  # dockerBuild:
-  #   name: Create Docker Image
-  #   needs: [build]
-  #   uses: ./.github/workflows/docker-build.yaml
-  #   secrets:
-  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     DB_USERNAME: ${{ secrets.DB_USERNAME }}
-  #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  dockerBuild:
+    name: Create Docker Image
+    needs: [build]
+    uses: ./.github/workflows/docker-build.yaml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-  # dockerScan:
-  #   name: Scan Docker Image
-  #   needs: [dockerBuild]
-  #   uses: ./.github/workflows/docker-scan.yaml
-  #   secrets:
-  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  dockerScan:
+    name: Scan Docker Image
+    needs: [dockerBuild]
+    uses: ./.github/workflows/docker-scan.yaml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
