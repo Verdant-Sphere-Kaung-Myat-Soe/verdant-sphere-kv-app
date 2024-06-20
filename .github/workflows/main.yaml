@@ -1,13 +1,10 @@
 name: CI Workflow
 
 on:
-  push:
-    branches:
-      - ci
   pull_request:
     branches:
-      # - main
-      # - dev
+      - main
+      - dev
 
 jobs:
   build:
@@ -51,9 +48,9 @@ jobs:
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-  dockerScan:
-    name: Scan Docker Image
-    needs: [dockerBuild]
-    uses: ./.github/workflows/docker-scan.yaml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  # dockerScan:
+  #   name: Scan Docker Image
+  #   needs: [dockerBuild]
+  #   uses: ./.github/workflows/docker-scan.yaml
+  #   secrets:
+  #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

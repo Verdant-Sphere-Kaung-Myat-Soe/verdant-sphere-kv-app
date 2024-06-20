@@ -43,32 +43,41 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: "Build Docker Image and Generate tarball"
+        run: |
+          docker build -t verdant-sphere-kv:${{ github.sha }} ./Dockerfile
+          docker save -o verdant-sphere-kv.tar verdant-sphere-kv:${{ github.sha }}
+
+      - name: Run Trivy vulnerability scanner in tarball mode
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          input: /github/workspace/verdant-sphere-kv.tar
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push Docker Image to Docker Hub
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/verdant-sphere-kv:${{ github.sha }}
 
-      - name: Image digest
-        run: echo ${{ steps.build-and-push.outputs.digest }}
-      - name: Create .env file
-        run: |
-          cat <<EOF > .env
-          APP_NAME=Laravel
-          APP_ENV=production
-          APP_KEY=
-          APP_DEBUG=false
-          APP_URL=http://localhost
-          LOG_CHANNEL=stack
-          DB_CONNECTION=mysql
-          DB_HOST=mysql
-          DB_PORT=3306
-          DB_DATABASE=test
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          EOF
+      # - name: Image digest
+      #   run: echo ${{ steps.build-and-push.outputs.digest }}
+      # - name: Create .env file
+      #   run: |
+      #     cat <<EOF > .env
+      #     APP_NAME=Laravel
+      #     APP_ENV=production
+      #     APP_KEY=
+      #     APP_DEBUG=false
+      #     APP_URL=http://localhost
+      #     LOG_CHANNEL=stack
+      #     DB_CONNECTION=mysql
+      #     DB_HOST=mysql
+      #     DB_PORT=3306
+      #     DB_DATABASE=test
+      #     DB_USERNAME=${{ secrets.DB_USERNAME }}
+      #     DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+      #     EOF
 
       # - name: Copy .env file to container
       #   run: docker cp .env verdant-sphere-kv:/var/www/html/.env
