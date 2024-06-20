@@ -45,7 +45,7 @@ jobs:
 
       - name: "Build Docker Image and Generate tarball"
         run: |
-          docker build -t verdant-sphere-kv:${{ github.sha }} ./Dockerfile
+          docker build -t verdant-sphere-kv:${{ github.sha }} .
           docker save -o verdant-sphere-kv.tar verdant-sphere-kv:${{ github.sha }}
 
       - name: Run Trivy vulnerability scanner in tarball mode

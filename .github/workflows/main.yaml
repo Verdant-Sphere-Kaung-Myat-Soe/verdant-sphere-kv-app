@@ -12,15 +12,17 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       php-version: "8.3"
-  # test:
-  #   name: Test Laravel App
-  #   needs: [build]
-  #   uses: ./.github/workflows/test.yaml
-  #   with:
-  #     php-version: "8.3"
+      
+  test:
+    name: Test Laravel App
+    needs: [build]
+    uses: ./.github/workflows/test.yaml
+    with:
+      php-version: "8.3"
+
   sonarcloud:
     name: Scan Security with SonarCloud
-    needs: [build]
+    needs: [test]
     uses: ./.github/workflows/sonarcloud.yaml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -31,7 +33,7 @@ jobs:
 
   fileScan:
     name: File Security Scan with Snyk
-    needs: [build]
+    needs: [test]
     uses: ./.github/workflows/file-scan.yaml
     with:
       php-version: "8.3"
@@ -40,7 +42,7 @@ jobs:
 
   dockerBuild:
     name: Create Docker Image
-    needs: [build]
+    needs: [sonarcloud, fileScan]
     uses: ./.github/workflows/docker-build.yaml
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
