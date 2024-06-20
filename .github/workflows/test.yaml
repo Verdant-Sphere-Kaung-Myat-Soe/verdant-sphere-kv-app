@@ -14,10 +14,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: DJNosjhO
-          MYSQL_DATABASE: laravel_db
-          MYSQL_USER: keyvalue_user
-          MYSQL_PASSWORD: 6zFJfBEN
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: test
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
         ports:
           - 3306:3306
         options: >-
@@ -28,15 +28,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Build Laravel App
         uses: ./.github/prepare-action
         with:
           php-version: ${{ inputs.version }}
           cache-key: ${{ github.sha }}-php-vendor-cache
 
-      - name: Migrate the Database
-        run: |
-          php artisan migrate
+      # - name: Migrate the Database
+      #   run: |
+      #     php artisan migrate
 
       # - name: Run Unit Testing
       #   run: |
