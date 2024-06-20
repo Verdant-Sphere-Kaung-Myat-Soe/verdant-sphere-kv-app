@@ -1,0 +1,23 @@
+name: Development
+
+on:
+  workflow_call:
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+
+jobs:
+  dockerBuild:
+    name: "Scan Docker image"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/verdant-sphere-kv:${{ github.sha }}"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"

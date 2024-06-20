@@ -1,0 +1,32 @@
+name: File Scan with Snyk
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        description: "PHP Version"
+        required: true
+        type: string
+    secrets: 
+      SNYK_TOKEN:
+        required: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Laravel App
+        uses: ./.github/prepare-action
+        with:
+          php-version: ${{ inputs.php-version }}
+          cache-key: ${{ github.sha }}-php-vendor-cache
+
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/php@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        
